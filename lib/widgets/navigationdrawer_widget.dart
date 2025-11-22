@@ -67,7 +67,7 @@ class _NavigationdrawerWidgetState extends State<NavigationdrawerWidget> {
           ListTile(
             title: Text(
               "Registration New Cashier",
-              style: AppTextstyle.normalCoklat,
+              style: AppTextstyle.drawerText,
             ),
             leading: Icon(Icons.person_add, color: AppColor.warnaPrimer),
             onTap: () {
@@ -75,26 +75,26 @@ class _NavigationdrawerWidgetState extends State<NavigationdrawerWidget> {
             },
           ),
           ListTile(
-            title: Text("Dashboard", style: AppTextstyle.normalCoklat),
+            title: Text("Dashboard", style: AppTextstyle.drawerText),
             leading: Icon(Icons.dashboard, color: AppColor.warnaPrimer),
             onTap: () {
               Navigator.pushNamed(context, AppRoutes.dashboardScreen);
             },
           ),
           ListTile(
-            title: Text("Cashier POS", style: AppTextstyle.normalCoklat),
+            title: Text("Cashier POS", style: AppTextstyle.drawerText),
             leading: Icon(Icons.point_of_sale, color: AppColor.warnaPrimer),
             onTap: () {
               Navigator.pushNamed(context, AppRoutes.cashierPosScreen);
             },
           ),
           ExpansionTile(
-            title: Text("Product Management", style: AppTextstyle.normalCoklat),
+            title: Text("Product Management", style: AppTextstyle.drawerText),
             children: <Widget>[
               Padding(
                 padding: paddingMenuIndent,
                 child: ListTile(
-                  title: Text("Product", style: AppTextstyle.normalCoklat),
+                  title: Text("Product", style: AppTextstyle.drawerText),
                   leading: Icon(Icons.inventory, color: AppColor.warnaPrimer),
                   onTap: () {
                     Navigator.pushNamed(context, AppRoutes.getProductScreen);
@@ -104,7 +104,7 @@ class _NavigationdrawerWidgetState extends State<NavigationdrawerWidget> {
               Padding(
                 padding: paddingMenuIndent,
                 child: ListTile(
-                  title: Text("Add Product", style: AppTextstyle.normalCoklat),
+                  title: Text("Add Product", style: AppTextstyle.drawerText),
                   leading: Icon(Icons.add_box, color: AppColor.warnaPrimer),
                   onTap: () {
                     Navigator.pushNamed(context, AppRoutes.addProductScreen);
@@ -116,13 +116,13 @@ class _NavigationdrawerWidgetState extends State<NavigationdrawerWidget> {
           ExpansionTile(
             title: Text(
               "Customer Management",
-              style: AppTextstyle.normalCoklat,
+              style: AppTextstyle.drawerText,
             ),
             children: <Widget>[
               Padding(
                 padding: paddingMenuIndent,
                 child: ListTile(
-                  title: Text("Customer", style: AppTextstyle.normalCoklat),
+                  title: Text("Customer", style: AppTextstyle.drawerText),
                   leading: Icon(Icons.people, color: AppColor.warnaPrimer),
                   onTap: () {
                     Navigator.pushNamed(context, AppRoutes.getCustomerScreen);
@@ -132,7 +132,7 @@ class _NavigationdrawerWidgetState extends State<NavigationdrawerWidget> {
               Padding(
                 padding: paddingMenuIndent,
                 child: ListTile(
-                  title: Text("Add Customer", style: AppTextstyle.normalCoklat),
+                  title: Text("Add Customer", style: AppTextstyle.drawerText),
                   leading: Icon(Icons.person_add, color: AppColor.warnaPrimer),
                   onTap: () {
                     Navigator.pushNamed(context, AppRoutes.addCustomerScreen);
@@ -144,7 +144,7 @@ class _NavigationdrawerWidgetState extends State<NavigationdrawerWidget> {
                 child: ListTile(
                   title: Text(
                     "Transaction History",
-                    style: AppTextstyle.normalCoklat,
+                    style: AppTextstyle.drawerText,
                   ),
                   leading: Icon(Icons.history, color: AppColor.warnaPrimer),
                   onTap: () {
@@ -155,14 +155,14 @@ class _NavigationdrawerWidgetState extends State<NavigationdrawerWidget> {
             ],
           ),
           ExpansionTile(
-            title: Text("Stock Management", style: AppTextstyle.normalCoklat),
+            title: Text("Stock Management", style: AppTextstyle.drawerText),
             children: <Widget>[
               Padding(
                 padding: paddingMenuIndent,
                 child: ListTile(
                   title: Text(
                     "Product Stock",
-                    style: AppTextstyle.normalCoklat,
+                    style: AppTextstyle.drawerText,
                   ),
                   leading: Icon(Icons.store, color: AppColor.warnaPrimer),
                   onTap: () {
@@ -175,7 +175,7 @@ class _NavigationdrawerWidgetState extends State<NavigationdrawerWidget> {
                 child: ListTile(
                   title: Text(
                     "Product Stock History",
-                    style: AppTextstyle.normalCoklat,
+                    style: AppTextstyle.drawerText,
                   ),
                   leading: Icon(Icons.history, color: AppColor.warnaPrimer),
                   onTap: () {
@@ -186,12 +186,12 @@ class _NavigationdrawerWidgetState extends State<NavigationdrawerWidget> {
             ],
           ),
           ExpansionTile(
-            title: Text("Report and Print", style: AppTextstyle.normalCoklat),
+            title: Text("Report and Print", style: AppTextstyle.drawerText),
             children: <Widget>[
               Padding(
                 padding: paddingMenuIndent,
                 child: ListTile(
-                  title: Text("Sales Report", style: AppTextstyle.normalCoklat),
+                  title: Text("Sales Report", style: AppTextstyle.drawerText),
                   leading: Icon(
                     Icons.insert_chart,
                     color: AppColor.warnaPrimer,
@@ -206,7 +206,7 @@ class _NavigationdrawerWidgetState extends State<NavigationdrawerWidget> {
                 child: ListTile(
                   title: Text(
                     "Profit & Loss Report",
-                    style: AppTextstyle.normalCoklat,
+                    style: AppTextstyle.drawerText,
                   ),
                   leading: Icon(
                     Icons.insert_chart,

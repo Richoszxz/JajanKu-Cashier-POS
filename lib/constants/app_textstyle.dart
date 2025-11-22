@@ -35,7 +35,13 @@ class AppTextstyle {
 
   static TextStyle normalCream = GoogleFonts.poppins(
     fontSize: 16,
-    fontWeight: FontWeight.w500,
+    fontWeight: FontWeight.bold,
     color: AppColor.warnaSekunder
+  );
+
+  static TextStyle drawerText = GoogleFonts.poppins(
+    fontSize: 16,
+    fontWeight: FontWeight.w500,
+    color: AppColor.warnaTeks
   );
 }

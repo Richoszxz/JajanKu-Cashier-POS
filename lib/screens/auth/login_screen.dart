@@ -36,7 +36,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
       if (response.session != null) {
         Navigator.pushNamedAndRemoveUntil(context, AppRoutes.cashierPosScreen, (route) => false);
-        successAlert(context, text: "Login success!", title: "Successed!");
       } else {
         errorAlert(context, text: "Login error! check Email and Password", title: "Error!");
       }

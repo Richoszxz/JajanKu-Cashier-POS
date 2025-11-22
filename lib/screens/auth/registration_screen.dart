@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:jajanku_pos/constants/app_color.dart';
 import 'package:jajanku_pos/widgets/appbar_widget.dart';
-import 'package:jajanku_pos/constants/app_size.dart';
 import 'package:jajanku_pos/widgets/navigationdrawer_widget.dart';
 import 'package:jajanku_pos/constants/app_textstyle.dart';
 import 'package:jajanku_pos/widgets/textformfield_widget.dart';
-import 'package:jajanku_pos/services/authentication_services.dart';
 
 class RegistrationScreen extends StatefulWidget {
   const RegistrationScreen({super.key});
@@ -23,23 +21,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   final TextEditingController _confirmPasswordController =
       TextEditingController();
 
-  final AuthenticationServices _authenticationServices =
-      AuthenticationServices();
-
   final _formKey = GlobalKey<FormState>();
-  bool _isLoading = false;
-
-  void _handleRegister() async {
-    if (!_formKey.currentState!.validate()) return;
-
-    setState(() => _isLoading = true);
-    try {
-      final request = await _authenticationServices.register(
-        _emailController.text.trim(),
-        _passwordController.text.trim(),
-      );
-    } catch (e) {}
-  }
 
   @override
   Widget build(BuildContext context) {
