@@ -4,7 +4,12 @@ import 'package:jajanku_pos/constants/app_textstyle.dart';
 
 class AppbarWidget extends StatelessWidget implements PreferredSizeWidget {
   final String judulHalaman;
-  const AppbarWidget({super.key, required this.judulHalaman});
+  final bool tombolKembali;
+  const AppbarWidget({
+    super.key,
+    required this.judulHalaman,
+    this.tombolKembali = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +19,12 @@ class AppbarWidget extends StatelessWidget implements PreferredSizeWidget {
       toolbarHeight: 90,
       backgroundColor: AppColor.warnaPrimer,
       foregroundColor: AppColor.warnaSekunder,
-      title: Text(judulHalaman, style: AppTextstyle.appBarTeks),
+      title: Text(
+        judulHalaman,
+        style: AppTextstyle.appBarTeks,
+        maxLines: 2,
+        textAlign: TextAlign.center,
+      ),
       centerTitle: true,
       leadingWidth: 72,
       leading: Builder(
@@ -22,11 +32,17 @@ class AppbarWidget extends StatelessWidget implements PreferredSizeWidget {
           padding: const EdgeInsets.only(left: 12), // jarak kiri
           child: IconButton(
             icon: Icon(
-              Icons.menu,
-              size: 40, // ukuran ikon drawer
+              tombolKembali ? Icons.arrow_back_ios : Icons.menu,
+              size: 30, // ukuran ikon drawer
               color: AppColor.warnaSekunder,
             ),
-            onPressed: () => Scaffold.of(context).openDrawer(), // buka drawer custom
+            onPressed: () {
+              if (tombolKembali) {
+                Navigator.pop(context);
+              } else {
+                Scaffold.of(context).openDrawer();
+              }
+            }, // buka drawer custom
           ),
         ),
       ),
@@ -51,7 +67,7 @@ class AppbarWidget extends StatelessWidget implements PreferredSizeWidget {
             icon: Icon(
               Icons.settings_outlined,
               color: AppColor.warnaSekunder,
-              size: 40,
+              size: 30,
             ),
           ),
         ),

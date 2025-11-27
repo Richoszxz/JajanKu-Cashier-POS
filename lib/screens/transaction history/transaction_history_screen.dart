@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:jajanku_pos/widgets/appbar_widget.dart';
 import 'package:jajanku_pos/widgets/navigationdrawer_widget.dart';
+import 'package:jajanku_pos/widgets/transactionhistorycontent_widgets.dart';
 
 class TransactionHistoryScreen extends StatefulWidget {
   const TransactionHistoryScreen({super.key});
@@ -15,8 +16,17 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
     return Scaffold(
       appBar: AppbarWidget(judulHalaman: "Transaction History"),
       drawer: const NavigationdrawerWidget(),
-      body: const Center(
-        child: Text('Transaction History Screen Content'),
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: SingleChildScrollView(
+          child: Column(
+            spacing: 10,
+            children: [
+              TransactionhistorycontentWidgets(),
+              TransactionhistorycontentWidgets()
+            ],
+          ),
+        ),
       ),
     );
   }

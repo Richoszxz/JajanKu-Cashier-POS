@@ -18,10 +18,13 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailAndUsernameController =
       TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final AuthenticationServices _authenticationServices = AuthenticationServices();
+  final AuthenticationServices _authenticationServices =
+      AuthenticationServices();
 
   final _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
+
+  bool _obscurePassword = true;
 
   void _handleLogin() async {
     if (!_formKey.currentState!.validate()) return;
@@ -35,14 +38,26 @@ class _LoginScreenState extends State<LoginScreen> {
       );
 
       if (response.session != null) {
-        Navigator.pushNamedAndRemoveUntil(context, AppRoutes.cashierPosScreen, (route) => false);
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          AppRoutes.cashierPosScreen,
+          (route) => false,
+        );
       } else {
-        errorAlert(context, text: "Login error! check Email and Password", title: "Error!");
+        errorAlert(
+          context,
+          text: "Login error! check Email and Password",
+          title: "Error!",
+        );
       }
     } on AuthException catch (e) {
       errorAlert(context, text: "Error ${e}", title: "Error");
     } catch (e) {
-      errorAlert(context, text: "Terjadi kesalahan", title: "Terjadi kesalahan");
+      errorAlert(
+        context,
+        text: "Terjadi kesalahan",
+        title: "Terjadi kesalahan",
+      );
     }
 
     setState(() => _isLoading = false);
@@ -50,7 +65,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       body: Stack(
         children: [
@@ -177,7 +191,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             child: TextFormField(
                               controller: _passwordController,
                               style: AppTextstyle.normalCream,
-                              obscureText: true,
+                              obscureText: _obscurePassword,
                               decoration: InputDecoration(
                                 filled: true,
                                 fillColor: AppColor.warnaPrimer,
@@ -191,7 +205,22 @@ class _LoginScreenState extends State<LoginScreen> {
                                   borderRadius: BorderRadius.circular(15),
                                   borderSide: BorderSide.none,
                                 ),
+                                suffixIcon: IconButton(
+                                  icon: Icon(
+                                    _obscurePassword
+                                        ? Icons.visibility_off
+                                        : Icons.visibility,
+                                    color: AppColor.warnaSekunder,
+                                    size: 30,
+                                  ),
+                                  onPressed: () {
+                                    setState(() {
+                                      _obscurePassword = !_obscurePassword;
+                                    });
+                                  },
+                                ),
                               ),
+
                               validator: (value) => value!.isEmpty
                                   ? 'Password tidak boleh kosong'
                                   : null,

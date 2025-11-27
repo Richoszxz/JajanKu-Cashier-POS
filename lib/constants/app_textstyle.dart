@@ -34,6 +34,12 @@ class AppTextstyle {
   );
 
   static TextStyle normalCream = GoogleFonts.poppins(
+    fontSize: 18,
+    fontWeight: FontWeight.normal,
+    color: AppColor.warnaSekunder
+  );
+
+  static TextStyle namaProduk = GoogleFonts.poppins(
     fontSize: 16,
     fontWeight: FontWeight.bold,
     color: AppColor.warnaSekunder

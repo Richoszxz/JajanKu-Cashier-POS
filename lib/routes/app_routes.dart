@@ -18,6 +18,7 @@ import 'package:jajanku_pos/screens/stock/stock_product_screen.dart';
 import 'package:jajanku_pos/screens/stock/product_stock_history_screen.dart';
 import 'package:jajanku_pos/screens/report/sales_report_screen.dart';
 import 'package:jajanku_pos/screens/report/profitloss_report_screen.dart';
+import 'package:jajanku_pos/models/customer_models.dart';
 
 class AppRoutes {
   static const splashScreen = '/splash';
@@ -49,14 +50,12 @@ class AppRoutes {
     registrationScreen: (context) => const RegistrationScreen(),
     dashboardScreen: (context) => const DashboardScreen(),
     cashierPosScreen: (context) => const CashierPosScreen(),
-    checkoutScreen: (context) => const CheckoutScreen(),
+    checkoutScreen: (context) => const CheckoutScreen(cartItems: [],),
     receiptScreen: (context) => const ReceiptScreen(),
     addProductScreen: (context) => const AddProductScreen(),
     getProductScreen: (context) => const GetProductScreen(),
     addCustomerScreen: (context) => const AddCustomerScreen(),
     getCustomerScreen: (context) => const GetCustomerScreen(),
-    detailCustomerScreen: (context) => const DetailCustomerScreen(),
-    editCustomerScreen: (context) => const EditCustomerScreen(),
     transactionHistoryScreen: (context) => const TransactionHistoryScreen(),
     stockProductScreen: (context) => const StockProductScreen(),
     productStockHistoryScreen: (context) => const ProductStockHistoryScreen(),

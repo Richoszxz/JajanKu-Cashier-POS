@@ -67,7 +67,7 @@ class _CardProductWidgetState extends State<CardProductWidget> {
             child: Center(
               child: Text(
                 widget.produk.namaProduk,
-                style: AppTextstyle.normalCream,
+                style: AppTextstyle.namaProduk,
                 maxLines: 2,
               ),
             ),

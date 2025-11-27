@@ -28,6 +28,9 @@ class MyApp extends StatelessWidget {
           collapsedIconColor:
               AppColor.warnaTeks, // Warna ikon saat tile tidak diperluas
         ),
+        drawerTheme: DrawerThemeData(
+          scrimColor: AppColor.warnaPrimer.withOpacity(0.5),
+        ),
       ),
       routes: AppRoutes.routes,
       home: const SplashScreen(),

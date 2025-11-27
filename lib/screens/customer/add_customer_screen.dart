@@ -32,17 +32,17 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
               children: [
                 TextformfieldWidget(
                   label: "Customer Name",
-                  hintText: "Input customer name . . .",
+                  hintText: "",
                   controller: _nameController,
                 ),
                 TextformfieldWidget(
                   label: "Email",
-                  hintText: "Input customer email . . .",
+                  hintText: "",
                   controller: _emailController,
                 ),
                 TextformfieldWidget(
                   label: "Phone Number",
-                  hintText: "Input customer phone number . . .",
+                  hintText: "",
                   controller: _phoneNumberController,
                 ),
                 SizedBox(height: 20),

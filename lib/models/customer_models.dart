@@ -6,6 +6,7 @@ class Pelanggan {
   final String nomoHandphonePelanggan;
   final int totalTransaksiPelanggan;
   final DateTime terakhirTransaksi;
+  final DateTime tanggalRegistrasi;
 
   Pelanggan({
     required this.id,
@@ -15,6 +16,7 @@ class Pelanggan {
     required this.nomoHandphonePelanggan,
     required this.totalTransaksiPelanggan,
     required this.terakhirTransaksi,
+    required this.tanggalRegistrasi
   });
 
   factory Pelanggan.fromMap(Map<String, dynamic> map) {
@@ -26,6 +28,7 @@ class Pelanggan {
       nomoHandphonePelanggan: map['no_handphone'] ?? "",
       totalTransaksiPelanggan: map['total_transaksi'] ?? 0,
       terakhirTransaksi: DateTime.parse(map['terakhir_transaksi'] ?? DateTime.now().toIso8601String()),
+      tanggalRegistrasi: DateTime.parse(map['created_at'] ?? DateTime.now().toIso8601String()),
     );
   }
 
@@ -38,6 +41,7 @@ class Pelanggan {
       'no_handphone': nomoHandphonePelanggan,
       'total_transaksi': totalTransaksiPelanggan,
       'terakhir_transaksi': terakhirTransaksi.toIso8601String(),
+      'created_at': tanggalRegistrasi.toIso8601String()
     };
   }
 }
