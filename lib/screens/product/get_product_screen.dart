@@ -9,7 +9,7 @@ import 'package:jajanku_pos/models/product_model.dart';
 import 'package:jajanku_pos/services/product_services.dart';
 import 'package:jajanku_pos/widgets/searchbar_widgets.dart';
 import 'package:jajanku_pos/models/category_models.dart';
-import 'package:jajanku_pos/widgets/customdropdown_widget.dart';
+import 'package:jajanku_pos/widgets/error_handler_widget.dart';
 
 class GetProductScreen extends StatefulWidget {
   const GetProductScreen({super.key});
@@ -42,163 +42,187 @@ class _GetProductScreenState extends State<GetProductScreen> {
   }
 
   void _showEditProductDialog(Produk produk) {
+    final namaController = TextEditingController(text: produk.namaProduk);
+    final hargaController = TextEditingController(
+      text: produk.hargaProduk.toString(),
+    );
+
     showDialog(
       context: context,
-      builder: (context) => Dialog(
-        backgroundColor: Colors.transparent,
-        insetPadding: const EdgeInsets.all(20),
-        child: Container(
-          padding: const EdgeInsets.all(20),
-          decoration: BoxDecoration(
-            color: AppColor.warnaSekunder,
-            borderRadius: BorderRadius.circular(24),
-            border: Border.all(
-              color: AppColor.warnaPrimer,
-              width: 6
-            )
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // JUDUL
-              Text(
-                "Edit Product",
-                style: GoogleFonts.poppins(
-                    fontSize: 26,
-                    fontWeight: FontWeight.bold,
-                    color:  AppColor.warnaTeks,
-                  ),
-              ),
-              const SizedBox(height: 24),
+      barrierColor: AppColor.warnaPrimer.withOpacity(0.5),
+      builder: (context) {
+        // state lokal untuk dialog
+        CategoryModel? selectedCat = kategori.firstWhere(
+          (cat) => cat.id == produk.kategoriId,
+          orElse: () => kategori.first,
+        );
 
-              // NAMA PRODUK
-              Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  "Name",
-                  style: AppTextstyle.normalCoklat,
-                ),
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          insetPadding: const EdgeInsets.all(20),
+          child: StatefulBuilder(
+            builder: (context, setStateDialog) => Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: AppColor.warnaSekunder,
+                borderRadius: BorderRadius.circular(24),
+                border: Border.all(color: AppColor.warnaPrimer, width: 6),
               ),
-              const SizedBox(height: 8),
-              TextField(
-                controller: TextEditingController(text: produk.namaProduk),
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: AppColor.warnaPrimer, // merah marun
-                  hintText: "Risoles Mayo",
-                  hintStyle: const TextStyle(color: Colors.white70),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide.none,
-                  ),
-                  contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 14,
-                  ),
-                ),
-                style: AppTextstyle.smallCream,
-              ),
-              const SizedBox(height: 16),
-
-              // HARGA
-              Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  "Price",
-                  style: AppTextstyle.normalCoklat
-                ),
-              ),
-              const SizedBox(height: 8),
-              TextField(
-                controller: TextEditingController(text: produk.hargaProduk.toString()),
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(
-                  prefixStyle: const TextStyle(color: Colors.white),
-                  filled: true,
-                  fillColor: AppColor.warnaPrimer,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide.none,
-                  ),
-                  contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 14,
-                  ),
-                ),
-                style: AppTextstyle.smallCream,
-              ),
-              const SizedBox(height: 16),
-
-              // KATEGORI
-              Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  "Category",
-                  style: AppTextstyle.normalCoklat
-                ),
-              ),
-              const SizedBox(height: 8),
-              Container(
-                height: 50,
-                width: double.infinity,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 4,
-                ),
-                decoration: BoxDecoration(
-                  color: AppColor.warnaPrimer,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: DropdownButtonHideUnderline(
-                  child: DropdownButton<CategoryModel>(
-                    value: kategori.firstWhere(
-                      (cat) => cat.namaKategori == produk.kategoriId,
-                      orElse: () => kategori[0],
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    "Edit Product",
+                    style: GoogleFonts.poppins(
+                      fontSize: 26,
+                      fontWeight: FontWeight.bold,
+                      color: AppColor.warnaTeks,
                     ),
-                    dropdownColor: AppColor.warnaPrimer,
-                    style: const TextStyle(color: Colors.white),
-                    icon: const Icon(
-                      Icons.keyboard_arrow_down,
-                      color: Colors.white,
-                    ),
-                    items: kategori.map((cat) {
-                      return DropdownMenuItem(
-                        value: cat,
-                        child: Text(cat.namaKategori),
-                      );
-                    }).toList(),
-                    onChanged: (value) {},
                   ),
-                ),
-              ),
-              const SizedBox(height: 30),
+                  const SizedBox(height: 24),
 
-              // TOMBOL SAVE
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () => Navigator.pop(context),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColor.warnaPrimer,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
+                  // NAMA
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text("Name", style: AppTextstyle.normalCoklat),
+                  ),
+                  const SizedBox(height: 8),
+                  TextField(
+                    controller: namaController,
+                    decoration: InputDecoration(
+                      filled: true,
+                      fillColor: AppColor.warnaPrimer,
+                      hintText: "Nama Produk",
+                      hintStyle: const TextStyle(color: Colors.white70),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide.none,
+                      ),
+                    ),
+                    style: AppTextstyle.smallCream,
+                  ),
+                  const SizedBox(height: 16),
+
+                  // HARGA
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text("Price", style: AppTextstyle.normalCoklat),
+                  ),
+                  const SizedBox(height: 8),
+                  TextField(
+                    controller: hargaController,
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(
+                      filled: true,
+                      fillColor: AppColor.warnaPrimer,
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide.none,
+                      ),
+                    ),
+                    style: AppTextstyle.smallCream,
+                  ),
+                  const SizedBox(height: 16),
+
+                  // KATEGORI
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text("Category", style: AppTextstyle.normalCoklat),
+                  ),
+                  const SizedBox(height: 8),
+                  Container(
+                    height: 50,
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColor.warnaPrimer,
                       borderRadius: BorderRadius.circular(12),
                     ),
-                  ),
-                  child: const Text(
-                    "Save",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
+                    child: DropdownButtonHideUnderline(
+                      child: DropdownButton<CategoryModel>(
+                        value: selectedCat,
+                        dropdownColor: AppColor.warnaPrimer,
+                        style: const TextStyle(color: Colors.white),
+                        icon: const Icon(
+                          Icons.keyboard_arrow_down,
+                          color: Colors.white,
+                        ),
+                        items: kategori.map((cat) {
+                          return DropdownMenuItem(
+                            value: cat,
+                            child: Text(
+                              cat.namaKategori,
+                              style: AppTextstyle.smallCream,
+                            ),
+                          );
+                        }).toList(),
+                        onChanged: (value) {
+                          setStateDialog(() {
+                            selectedCat = value;
+                          });
+                        },
+                      ),
                     ),
                   ),
-                ),
+                  const SizedBox(height: 30),
+
+                  // SAVE BUTTON
+                  SizedBox(
+                    width: 140,
+                    height: 40,
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        final updatedProduct = Produk(
+                          id: produk.id,
+                          kodeProduk: produk.kodeProduk,
+                          namaProduk: namaController.text,
+                          hargaProduk:
+                              double.tryParse(hargaController.text) ??
+                              produk.hargaProduk,
+                          kategoriId: selectedCat!.id!,
+                          stokProduk: produk.stokProduk,
+                          deskripsiProduk: produk.deskripsiProduk,
+                          gambarProduk: produk.gambarProduk,
+                        );
+
+                        try {
+                          await _productServices.editProduk(
+                            produk.id!,
+                            updatedProduct,
+                          );
+
+                          if (mounted) {
+                            Navigator.pop(context); // tutup dialog
+                            setState(() {}); // refresh UI
+                          }
+                        } catch (e) {
+                          if (mounted) {
+                            errorAlert(
+                              context,
+                              title: "Oops…",
+                              text: "Gagal mengupdate produk!",
+                            );
+                          }
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColor.warnaPrimer,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: Text("Save", style: AppTextstyle.normalCream),
+                    ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 
@@ -262,7 +286,39 @@ class _GetProductScreenState extends State<GetProductScreen> {
                           ),
                           // TOMBOL DELETE
                           ElevatedButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              confirmAlert(
+                                context,
+                                title: "Delete Product?",
+                                text: "Produk akan dihapus secara permanen.",
+                                onConfirm: () async {
+                                  try {
+                                    await _productServices.hapusProduk(
+                                      item.id!,
+                                    );
+
+                                    if (!mounted) return;
+
+                                    // refresh UI setelah delete
+                                    setState(() {});
+
+                                    // langsung tutup confirm alert
+                                    Navigator.pop(context);
+                                  } catch (e) {
+                                    if (!mounted) return;
+
+                                    Navigator.pop(
+                                      context,
+                                    ); // tutup confirm alert
+                                    errorAlert(
+                                      context,
+                                      title: "Oops…",
+                                      text: "Gagal menghapus produk!",
+                                    );
+                                  }
+                                },
+                              );
+                            },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: AppColor.warnaTeks,
                               padding: EdgeInsets.symmetric(horizontal: 5),

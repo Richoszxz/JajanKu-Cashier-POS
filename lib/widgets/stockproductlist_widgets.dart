@@ -41,6 +41,7 @@ class StockProductListWidget extends StatelessWidget {
   ) {
     showDialog(
       context: context,
+      barrierColor: AppColor.warnaPrimer.withOpacity(0.5),
       builder: (context) => Center(
         child: Material(
           color: Colors.transparent,

@@ -11,6 +11,7 @@ void successAlert(
 }) {
   QuickAlert.show(
     context: context,
+    barrierColor: AppColor.warnaPrimer.withOpacity(0.5),
     type: QuickAlertType.success,
     title: title,
     titleColor: AppColor.warnaTeks,
@@ -29,6 +30,7 @@ void errorAlert(
 }) {
   QuickAlert.show(
     context: context,
+    barrierColor: AppColor.warnaPrimer.withOpacity(0.5),
     type: QuickAlertType.error,
     title: title,
     titleColor: AppColor.warnaTeks,
@@ -44,9 +46,11 @@ void confirmAlert(
   BuildContext context, {
   required String text,
   required String title,
+  Function()? onConfirm,
 }) {
   QuickAlert.show(
     context: context,
+    barrierColor: AppColor.warnaPrimer.withOpacity(0.5),
     type: QuickAlertType.confirm,
     title: title,
     titleColor: AppColor.warnaTeks,
@@ -56,29 +60,10 @@ void confirmAlert(
     confirmBtnText: 'Ok',
     confirmBtnColor: AppColor.warnaPrimer,
     cancelBtnTextStyle: TextStyle(color: AppColor.warnaTeks),
+    autoCloseDuration: Duration(seconds: 2),
     onConfirmBtnTap: () async {
-      try {
-        await AuthenticationServices().signOut();
-
-        if (context.mounted) {
-          Navigator.pushNamedAndRemoveUntil(
-            context,
-            AppRoutes.loginScreen,
-            (route) => false,
-          );
-          successAlert(
-            context,
-            text: "Successed to sign out!",
-            title: "Success!",
-          );
-        }
-      } catch (e) {
-        Navigator.pop(context);
-        errorAlert(
-          context,
-          text: "Request sign out error!",
-          title: "Oops . . .",
-        );
+      if (onConfirm != null) {
+        await onConfirm(); // jalankan aksi custom
       }
     },
   );

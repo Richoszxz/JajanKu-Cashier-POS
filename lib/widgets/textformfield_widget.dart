@@ -7,12 +7,16 @@ class TextformfieldWidget extends StatefulWidget {
   final String hintText;
   final TextEditingController controller;
   final bool obscureText;
+  final Function(dynamic value)? validator;
+  final TextInputType keyboardType;
   const TextformfieldWidget({
     super.key,
     required this.label,
     required this.hintText,
     required this.controller,
     this.obscureText = false,
+    this.validator,
+    this.keyboardType = TextInputType.text
   });
 
   @override

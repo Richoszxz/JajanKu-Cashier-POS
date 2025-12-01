@@ -6,19 +6,15 @@ import 'package:jajanku_pos/screens/auth/registration_screen.dart';
 import 'package:jajanku_pos/screens/dashboard_screen.dart';
 import 'package:jajanku_pos/screens/cashier/cashier_pos_screen.dart';
 import 'package:jajanku_pos/screens/cashier/checkout_screen.dart';
-import 'package:jajanku_pos/screens/cashier/receipt_screen.dart';
 import 'package:jajanku_pos/screens/product/add_product_screen.dart';
 import 'package:jajanku_pos/screens/product/get_product_screen.dart';
 import 'package:jajanku_pos/screens/customer/add_customer_screen.dart';
 import 'package:jajanku_pos/screens/customer/get_customer_screen.dart';
-import 'package:jajanku_pos/screens/customer/detail_customer_screen.dart';
-import 'package:jajanku_pos/screens/customer/edit_customer_screen.dart';
 import 'package:jajanku_pos/screens/transaction history/transaction_history_screen.dart';
 import 'package:jajanku_pos/screens/stock/stock_product_screen.dart';
 import 'package:jajanku_pos/screens/stock/product_stock_history_screen.dart';
 import 'package:jajanku_pos/screens/report/sales_report_screen.dart';
 import 'package:jajanku_pos/screens/report/profitloss_report_screen.dart';
-import 'package:jajanku_pos/models/customer_models.dart';
 
 class AppRoutes {
   static const splashScreen = '/splash';
@@ -51,7 +47,6 @@ class AppRoutes {
     dashboardScreen: (context) => const DashboardScreen(),
     cashierPosScreen: (context) => const CashierPosScreen(),
     checkoutScreen: (context) => const CheckoutScreen(cartItems: [],),
-    receiptScreen: (context) => const ReceiptScreen(),
     addProductScreen: (context) => const AddProductScreen(),
     getProductScreen: (context) => const GetProductScreen(),
     addCustomerScreen: (context) => const AddCustomerScreen(),

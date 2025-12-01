@@ -56,7 +56,7 @@ class _CashierPosScreenState extends State<CashierPosScreen> {
   int get totalHarga {
     int total = 0;
     for (var item in _cartItems) {
-      total += item.produk.hargaProduk * item.qty;
+      total += item.produk.hargaProduk.toInt() * item.qty;
     }
     return total;
   }

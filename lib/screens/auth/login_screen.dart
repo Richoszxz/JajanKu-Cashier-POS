@@ -227,7 +227,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                           ),
 
-                          SizedBox(height: 40),
+                          SizedBox(height: 20,),
 
                           _isLoading
                               ? CircularProgressIndicator()

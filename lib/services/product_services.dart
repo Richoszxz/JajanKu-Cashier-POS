@@ -7,9 +7,31 @@ class ProductServices {
 
   // CREATE
   Future<void> tambahProduk(Produk produk) async {
-    final response = await _supabase.from('produk').insert(produk.toMap());
-    if (response.error != null) {
-      throw Exception('Gagal menambahkan produk: ${response.error!.message}');
+    try {
+      await _supabase.from('produk').insert(produk.toInsertMap());
+    } catch (e) {
+      throw Exception("Gagal menambahkan produk: $e");
+    }
+  }
+
+  // Generate Kode Produk berdasarkan ID terakhir
+  Future<String> generateKodeProdukById() async {
+    try {
+      final response = await _supabase
+          .from('produk')
+          .select('id')
+          .order('id', ascending: false)
+          .limit(1);
+
+      int nextId = 1;
+
+      if (response.isNotEmpty) {
+        nextId = (response.first['id'] as int) + 1;
+      }
+
+      return "PRD${nextId.toString().padLeft(6, '0')}";
+    } catch (e) {
+      throw Exception("Gagal generate kode produk: $e");
     }
   }
 
@@ -21,28 +43,29 @@ class ProductServices {
       return (response as List<dynamic>)
           .map((item) => Produk.fromMap(item))
           .toList();
-    } on Exception catch (e) {
-      throw Exception('Gagal mengambil produk $e');
+    } catch (e) {
+      throw Exception("Gagal mengambil data produk: $e");
     }
   }
 
   // UPDATE
   Future<void> editProduk(int id, Produk produk) async {
-    final response = await _supabase
-        .from('produk')
-        .update(produk.toMap())
-        .eq("id", id);
-    if (response.error != null) {
-      throw Exception('Gagal mengedit produk: ${response.error!.message}');
+    try {
+      await _supabase
+          .from('produk')
+          .update(produk.toUpdateMap())
+          .eq('id', id);
+    } catch (e) {
+      throw Exception("Gagal mengedit produk: $e");
     }
   }
 
   // DELETE
   Future<void> hapusProduk(int id) async {
     try {
-      _supabase.from('produk').delete().eq("id", id);
-    } on Exception catch (e) {
-      throw Exception('Gagal menghapus produk: $e');
+      await _supabase.from('produk').delete().eq("id", id);
+    } catch (e) {
+      throw Exception("Gagal menghapus produk: $e");
     }
   }
 
@@ -54,8 +77,8 @@ class ProductServices {
       return (response as List<dynamic>)
           .map((item) => CategoryModel.fromJson(item))
           .toList();
-    } on Exception catch (e) {
-      throw Exception("Gagal mengambil kategori! $e");
+    } catch (e) {
+      throw Exception("Gagal mengambil kategori: $e");
     }
   }
 }

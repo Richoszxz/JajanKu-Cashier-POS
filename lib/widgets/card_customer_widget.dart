@@ -43,12 +43,13 @@ class _CardCustomerWidgetState extends State<CardCustomerWidget> {
             child: Icon(Icons.account_circle_outlined, size: 45, color: AppColor.warnaTeks),
           ),
           title: Text(
-            widget.pelanggan.kodePelanggan,
+            widget.pelanggan.kodePelanggan.toString(),
             style: AppTextstyle.normalCream,
           ),
           subtitle: Text(
             widget.pelanggan.namaPelanggan,
             style: AppTextstyle.appBarTeks,
+            maxLines: 1,
           ),
           trailing: PopupMenuButton<String>(
             color: AppColor.warnaSekunder, // Warna background menu

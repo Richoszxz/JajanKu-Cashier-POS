@@ -46,7 +46,7 @@ class _CardProductWidgetState extends State<CardProductWidget> {
               top: Radius.circular(15),
               bottom: Radius.circular(15),
             ),
-            child: widget.produk.gambarProduk.isEmpty
+            child: widget.produk.gambarProduk!.isEmpty
                 ? Container(
                     height: 120,
                     color: Colors.grey[300],
@@ -54,7 +54,7 @@ class _CardProductWidgetState extends State<CardProductWidget> {
                     child: Icon(Icons.image_not_supported, size: 40),
                   )
                 : Image.network(
-                    widget.produk.gambarProduk,
+                    widget.produk.gambarProduk.toString(),
                     height: AppSize.tinggi(context) * 0.14,
                     width: double.infinity,
                     fit: BoxFit.cover,
@@ -68,7 +68,7 @@ class _CardProductWidgetState extends State<CardProductWidget> {
               child: Text(
                 widget.produk.namaProduk,
                 style: AppTextstyle.namaProduk,
-                maxLines: 2,
+                maxLines: 1,
               ),
             ),
           ),

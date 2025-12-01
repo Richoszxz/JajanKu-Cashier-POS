@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:jajanku_pos/widgets/appbar_widget.dart';
 import 'package:jajanku_pos/widgets/navigationdrawer_widget.dart';
-import 'package:jajanku_pos/constants/app_color.dart';
-import 'package:jajanku_pos/constants/app_textstyle.dart';
 import 'package:jajanku_pos/widgets/card_customer_widget.dart';
 import 'package:jajanku_pos/widgets/searchbar_widgets.dart';
 import 'package:jajanku_pos/models/customer_models.dart';
@@ -18,50 +16,90 @@ class GetCustomerScreen extends StatefulWidget {
 class _GetCustomerScreenState extends State<GetCustomerScreen> {
   final CustomerServices _customerServices = CustomerServices();
 
+  List<Pelanggan> allCustomers = [];
+  List<Pelanggan> filteredCustomers = [];
+
+  final TextEditingController _searchController = TextEditingController();
+
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    loadCustomers();
+  }
+
+  Future<void> loadCustomers() async {
+    try {
+      final data = await _customerServices.ambilCustomer();
+
+      // SORTING CUSTOMER PALING BARU DI ATAS
+      data.sort((a, b) {
+        final dateA = a.tanggalRegistrasi ?? DateTime(0);
+        final dateB = b.tanggalRegistrasi ?? DateTime(0);
+        return dateB.compareTo(dateA); // terbaru → atas
+      });
+
+      setState(() {
+        allCustomers = data;
+        filteredCustomers = data;
+        isLoading = false;
+      });
+    } catch (e) {
+      setState(() => isLoading = false);
+      print("Error loading customers: $e");
+    }
+  }
+
+  // SEARCH FUNCTION
+  void _filterCustomers(String query) {
+    final input = query.toLowerCase();
+
+    setState(() {
+      filteredCustomers = allCustomers.where((customer) {
+        final nama = customer.namaPelanggan.toLowerCase();
+        final kode = customer.kodePelanggan.toString().toLowerCase();
+        return nama.contains(input) || kode.contains(input);
+      }).toList();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppbarWidget(judulHalaman: "Customer"),
       drawer: const NavigationdrawerWidget(),
-      body: FutureBuilder<List<Pelanggan>>(
-        future: _customerServices.ambilCustomer(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
-          }
 
-          if (snapshot.hasError) {
-            return Center(child: Text("Error: ${snapshot.error}"));
-          }
-
-          if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return Center(child: Text("No customers found"));
-          }
-
-          final customerList = snapshot.data!;
-
-          return Padding(
-            padding: EdgeInsetsGeometry.all(10),
-            child: Column(
-              children: [
-                // SEARCH BAR
-                SearchbarWidgets(hintText: "Search customer . . ."),
-                SizedBox(height: 12),
-                // LIST VIEW CUSTOMER
-                Expanded(
-                  child: ListView.builder(
-                    itemCount: customerList.length,
-                    itemBuilder: (context, index) {
-                      final customer = customerList[index];
-                      return CardCustomerWidget(pelanggan: customer);
-                    },
+      body: isLoading
+          ? Center(child: CircularProgressIndicator())
+          : Padding(
+              padding: const EdgeInsets.all(10),
+              child: Column(
+                children: [
+                  // SEARCH BAR
+                  SearchbarWidgets(
+                    hintText: "Search customer . . .",
+                    controller: _searchController,
+                    onChanged: _filterCustomers,
                   ),
-                ),
-              ],
+
+                  SizedBox(height: 12),
+
+                  // LIST CUSTOMER
+                  Expanded(
+                    child: filteredCustomers.isEmpty
+                        ? Center(child: Text("No matching customers"))
+                        : ListView.builder(
+                            itemCount: filteredCustomers.length,
+                            itemBuilder: (context, index) {
+                              final customer = filteredCustomers[index];
+                              return CardCustomerWidget(pelanggan: customer);
+                            },
+                          ),
+                  ),
+                ],
+              ),
             ),
-          );
-        },
-      ),
     );
   }
 }

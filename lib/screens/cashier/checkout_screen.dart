@@ -10,6 +10,7 @@ import 'package:jajanku_pos/constants/app_size.dart';
 import 'package:jajanku_pos/widgets/discounts_dialog_widgets.dart';
 import 'package:jajanku_pos/widgets/payment_method_bottom_sheet_widgets.dart';
 import 'package:jajanku_pos/widgets/textformfield_widget.dart';
+import 'package:jajanku_pos/screens/cashier/receipt_screen.dart';
 
 class CheckoutScreen extends StatefulWidget {
   final List<CartItem> cartItems;
@@ -27,7 +28,180 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   int get subtotal {
     return widget.cartItems.fold(
       0,
-      (sum, item) => sum + (item.produk.hargaProduk * item.qty),
+      (sum, item) => sum + (item.produk.hargaProduk.toInt() * item.qty),
+    );
+  }
+
+  void showPaymentConfirmationDialog() {
+    final int cashPaid = int.tryParse(cashPaidController.text) ?? 0;
+    final int totalPayment = subtotal - 1500; // DISKON SEMENTARA CONTOH
+    final int change = cashPaid - totalPayment;
+
+    showDialog(
+      context: context,
+      barrierColor: AppColor.warnaPrimer.withOpacity(0.5),
+      barrierDismissible: false,
+      builder: (context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: AppColor.warnaSekunder,
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: AppColor.warnaPrimer, width: 6),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // TITLE
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "Payment Confirmation",
+                      style: AppTextstyle.normalCoklat,
+                    ),
+                    InkWell(
+                      onTap: () => Navigator.pop(context),
+                      child: Icon(Icons.close_rounded, size: 28),
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 20),
+
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text("Customer", style: AppTextstyle.smallCoklat),
+                    Text(
+                      selectedCustomer?.namaPelanggan ?? "No Customer",
+                      style: AppTextstyle.smallCoklat,
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 10),
+
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text("Payment Method", style: AppTextstyle.smallCoklat),
+                    Text("Cash", style: AppTextstyle.smallCoklat),
+                  ],
+                ),
+
+                const SizedBox(height: 10),
+
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text("Cash Paid", style: AppTextstyle.smallCoklat),
+                    Text("Rp. $cashPaid", style: AppTextstyle.smallCoklat),
+                  ],
+                ),
+
+                Divider(color: AppColor.warnaPrimer, height: 20),
+
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text("Total", style: AppTextstyle.normalCoklat),
+                    Text("Rp. $totalPayment", style: AppTextstyle.normalCoklat),
+                  ],
+                ),
+
+                const SizedBox(height: 20),
+
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    // CANCEL BUTTON
+                    Expanded(
+                      child: SizedBox(
+                        height: 45,
+                        child: OutlinedButton(
+                          style: OutlinedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            side: const BorderSide(
+                              color: AppColor.warnaPrimer,
+                              width: 2,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                          ),
+                          onPressed: () => Navigator.pop(context),
+                          child: Text(
+                            "Cancel",
+                            style: GoogleFonts.poppins(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: AppColor.warnaPrimer,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+
+                    // CONFIRM BUTTON
+                    Expanded(
+                      child: SizedBox(
+                        height: 45,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+
+                            // NAVIGATE KE RECEIPT
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => ReceiptScreen(
+                                  subtotal: subtotal,
+                                  discount: 1500,
+                                  total: totalPayment,
+                                  cash: cashPaid,
+                                  change: change,
+                                  customer:
+                                      selectedCustomer?.namaPelanggan ?? "-",
+                                  transactionCode: "INV000001",
+                                  date: DateTime.now().toString(),
+                                  cashier: "Richo",
+                                  items: widget.cartItems,
+                                ),
+                              ),
+                            );
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColor.warnaPrimer,
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                          ),
+                          child: Text(
+                            "Confirm",
+                            style: GoogleFonts.poppins(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 
@@ -51,102 +225,133 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             ),
             const SizedBox(height: 10),
 
-            // =============================================== //
-            //            TAMPILAN ORDER DETAILS                //
-            // =============================================== //
+            // ================================
+            //        TAMPILAN ORDER DETAILS
+            // ================================
             Container(
-              width: AppSize.lebar(context) * 1,
-              height: AppSize.tinggi(context) * 0.25,
+              width: AppSize.lebar(context),
               margin: const EdgeInsets.only(bottom: 13),
-              padding: const EdgeInsets.all(10),
+              padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20),
                 color: AppColor.warnaSekunder,
+                borderRadius: BorderRadius.circular(20),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.grey.withOpacity(0.5),
-                    offset: const Offset(0, 8),
-                    blurRadius: 8,
-                    spreadRadius: 2,
+                    color: Colors.grey.withOpacity(0.4),
+                    offset: const Offset(0, 4),
+                    blurRadius: 6,
                   ),
                 ],
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text("Order Details", style: AppTextstyle.normalCoklat),
-                  const SizedBox(height: 8),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text("Order details", style: AppTextstyle.normalCoklat),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppColor.warnaSekunder,
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(
+                            color: AppColor.warnaPrimer,
+                            width: 3,
+                          ),
+                        ),
+                        child: Text("Add", style: AppTextstyle.normalCoklat),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+
+                  // ===== LIST ITEM =====
                   Container(
-                    width: AppSize.lebar(context) * 1,
-                    height: AppSize.tinggi(context) * 0.18,
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    padding: const EdgeInsets.all(14),
                     decoration: BoxDecoration(
                       color: AppColor.warnaPrimer,
                       borderRadius: BorderRadius.circular(15),
                     ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(10),
-                      child: Column(
-                        children: widget.cartItems.map((item) {
-                          return Expanded(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Column(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                    child: Column(
+                      children: widget.cartItems.map((item) {
+                        return Container(
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              // ============================
+                              //     KOLOM KIRI (NAME + PRICE)
+                              // ============================
+                              Expanded(
+                                child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      "${item.produk.namaProduk}",
-                                      style: AppTextstyle.namaProduk,
+                                      item.produk.namaProduk,
+                                      style: AppTextstyle.namaProduk.copyWith(fontSize: 20),
                                     ),
+                                    SizedBox(height: 75),
                                     Text(
                                       "Rp. ${item.produk.hargaProduk * item.qty}",
                                       style: AppTextstyle.normalCream,
                                     ),
                                   ],
                                 ),
-                                Column(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                  children: [
-                                    Image.network(
-                                      item.produk.gambarProduk,
-                                      width: 70,
-                                      height: 80,
+                              ),
+
+                              // ============================
+                              //    KOLOM KANAN (IMAGE + QTY)
+                              // ============================
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  // GAMBAR (kanan atas)
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(12),
+                                    child: Image.network(
+                                      item.produk.gambarProduk.toString(),
+                                      width: 65,
+                                      height: 65,
                                       fit: BoxFit.cover,
                                     ),
-                                    Row(
-                                      children: [
-                                        IconButton(
-                                          onPressed: null,
-                                          icon: Icon(
-                                            Icons.remove_circle_outline_rounded,
-                                            size: 30,
-                                          ),
+                                  ),
+
+                                  const SizedBox(height: 30),
+
+                                  // COUNTER (kanan bawah)
+                                  Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      IconButton(
+                                        onPressed: null,
+                                        icon: Icon(
+                                          Icons.remove_circle_outline_rounded,
+                                          color: Colors.white,
                                         ),
-                                        Text(
-                                          "${item.qty}",
-                                          style: AppTextstyle.normalCream,
+                                      ),
+                                      Text(
+                                        "${item.qty}",
+                                        style: AppTextstyle.normalCream,
+                                      ),
+                                      IconButton(
+                                        onPressed: null,
+                                        icon: Icon(
+                                          Icons.add_circle_rounded,
+                                          color: Colors.white,
                                         ),
-                                        IconButton(
-                                          onPressed: null,
-                                          icon: Icon(
-                                            Icons.add_circle_rounded,
-                                            size: 30,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          );
-                        }).toList(),
-                      ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        );
+                      }).toList(),
                     ),
                   ),
                 ],
@@ -281,7 +486,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         ),
       ),
       bottomNavigationBar: Container(
-        height: AppSize.tinggi(context) * 0.08,
+        height: AppSize.tinggi(context) * 0.10,
         decoration: BoxDecoration(
           color: AppColor.warnaSekunder,
           borderRadius: BorderRadius.only(
@@ -290,7 +495,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           ),
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withOpacity(0.5),
+              color: AppColor.warnaSekunder.withOpacity(0.5),
               offset: const Offset(0, -8),
               blurRadius: 8,
               spreadRadius: 2,
@@ -299,14 +504,23 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         ),
         child: Padding(
           padding: const EdgeInsets.all(15),
-          child: ElevatedButton(
-            onPressed: () {},
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColor.warnaPrimer,
-            ),
-            child: Text(
-              "Payment Confirmation",
-              style: AppTextstyle.normalCream,
+          child: SizedBox(
+            width: double.infinity,
+            height: double.infinity,
+            child: ElevatedButton(
+              onPressed: () {
+                showPaymentConfirmationDialog();
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColor.warnaPrimer,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+              ),
+              child: Text(
+                "Payment Confirmation",
+                style: AppTextstyle.normalCream,
+              ),
             ),
           ),
         ),
@@ -340,6 +554,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               if (label == "Payment Methods") {
                 showModalBottomSheet(
                   context: context,
+                  barrierColor: AppColor.warnaPrimer.withOpacity(0.5),
                   builder: (_) => PaymentMethodBottomSheetWidgets(
                     onSelected: (value) {
                       print("payment selected $value");
@@ -351,7 +566,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
               if (label == "Discounts") {
                 showDialog(
                   context: context,
-                  barrierColor: Colors.black54,
+                  barrierColor: AppColor.warnaPrimer.withOpacity(0.5),
                   builder: (_) => DiscountsDialogWidgets(
                     onSelected: (value) {
                       print("Discount Selected: $value");
@@ -384,7 +599,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                       SizedBox(width: 10),
                       Text(
                         labelInfo,
-                        style: AppTextstyle.normalCream.copyWith(
+                        style: AppTextstyle.smallCream.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -410,34 +625,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  // BUAT PAYMENT DETAILS NGISI DETAILNYA
-
-  Widget _row(List<String> data) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: data.map((e) => Expanded(child: Text(e))).toList(),
-      ),
-    );
-  }
-
-  Widget _rowTotalPayment(List<String> data) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: data
-            .map(
-              (e) => Expanded(
-                child: Text(e, style: GoogleFonts.poppins(fontSize: 20)),
-              ),
-            )
-            .toList(),
       ),
     );
   }

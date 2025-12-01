@@ -108,7 +108,7 @@ class _DetailCustomerScreenState extends State<DetailCustomerScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.end,
                                 children: [
                                   Text(
-                                    widget.pelanggan.kodePelanggan,
+                                    widget.pelanggan.kodePelanggan.toString(),
                                     style: AppTextstyle.smallCream,
                                     maxLines: 1,
                                   ),

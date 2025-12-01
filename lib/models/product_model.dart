@@ -1,22 +1,22 @@
 class Produk {
-  final int id;
-  final String kodeProduk;
+  final int? id;
+  final String? kodeProduk;
   final String namaProduk;
-  final int hargaProduk;
+  final double hargaProduk;
   final int kategoriId;
   final int stokProduk;
-  final String deskripsiProduk;
-  final String gambarProduk;
+  final String? deskripsiProduk;
+  final String? gambarProduk;
 
   Produk({
-    required this.id,
-    required this.kodeProduk,
+    this.id,
+    this.kodeProduk,
     required this.namaProduk,
     required this.hargaProduk,
     required this.kategoriId,
     required this.stokProduk,
-    required this.deskripsiProduk,
-    required this.gambarProduk,
+    this.deskripsiProduk,
+    this.gambarProduk,
   });
 
   factory Produk.fromMap(Map<String, dynamic> map) {
@@ -32,16 +32,23 @@ class Produk {
     );
   }
 
-  Map<String, dynamic> toMap() {
+  Map<String, dynamic> toInsertMap() {
     return {
-      'id': id,
       'kode_produk': kodeProduk,
       'nama_produk': namaProduk,
       'harga': hargaProduk,
-      'kategori_id': kategoriId,
       'stok': stokProduk,
+      'kategori_id': kategoriId,
       'deskripsi': deskripsiProduk,
-      'gambar': gambarProduk,
+      'gambar_url': gambarProduk,
+    };
+  }
+
+  Map<String, dynamic> toUpdateMap() {
+    return {
+      'nama_produk': namaProduk,
+      'harga': hargaProduk,
+      'kategori_id': kategoriId,
     };
   }
 }
