@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:jajanku_pos/routes/app_routes.dart';
+import 'package:jajanku_pos/services/authentication_services.dart';
 import 'package:jajanku_pos/widgets/appbar_widget.dart';
 import 'package:jajanku_pos/widgets/navigationdrawer_widget.dart';
 import 'package:jajanku_pos/widgets/error_handler_widget.dart';
@@ -16,6 +18,26 @@ class MyProfileScreen extends StatefulWidget {
 
 class _MyProfileScreenState extends State<MyProfileScreen> {
   final profileServices = ProfileServices();
+  final _authService = AuthenticationServices();
+
+  Future<void> logout(BuildContext context) async {
+    try {
+      await _authService.signOut();
+
+      // Arahkan ke login dan hapus semua route sebelumnya
+      Navigator.pushNamedAndRemoveUntil(
+        context,
+        AppRoutes.loginScreen,
+        (route) => false,
+      );
+    } catch (e) {
+      errorAlert(
+        context,
+        text: "Failed request sign out !",
+        title: "Oops . . .",
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -324,8 +346,13 @@ class _MyProfileScreenState extends State<MyProfileScreen> {
                           height: AppSize.tinggi(context) * 0.05,
                           width: AppSize.lebar(context) * 0.45,
                           child: ElevatedButton(
-                            onPressed: ()  {
-                              confirmAlert(context, text: "Are you sure you want to log out?", title: "Sign Out ?");
+                            onPressed: () {
+                              confirmAlert(
+                                context,
+                                text: "Are you sure you want to log out?",
+                                title: "Sign Out ?",
+                                onConfirm: () => logout(context),
+                              );
                             },
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,

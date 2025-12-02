@@ -47,6 +47,27 @@ class _GetProductScreenState extends State<GetProductScreen> {
       text: produk.hargaProduk.toString(),
     );
 
+    // SnackBar khusus agar warnanya sesuai aplikasi
+    void showAppSnack(String msg) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: AppColor.warnaPrimer,
+          content: Text(
+            msg,
+            style: const TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          behavior: SnackBarBehavior.floating,
+          margin: const EdgeInsets.all(15),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+      );
+    }
+
     showDialog(
       context: context,
       barrierColor: AppColor.warnaPrimer.withOpacity(0.5),
@@ -175,6 +196,29 @@ class _GetProductScreenState extends State<GetProductScreen> {
                     height: 40,
                     child: ElevatedButton(
                       onPressed: () async {
+                        /// VALIDATION SECTION
+                        if (namaController.text.trim().isEmpty) {
+                          showAppSnack("Nama produk tidak boleh kosong.");
+                          return;
+                        }
+
+                        if (hargaController.text.trim().isEmpty) {
+                          showAppSnack("Harga tidak boleh kosong.");
+                          return;
+                        }
+
+                        final harga = double.tryParse(hargaController.text);
+
+                        if (harga == null) {
+                          showAppSnack("Harga hanya boleh angka.");
+                          return;
+                        }
+
+                        if (selectedCat == null) {
+                          showAppSnack("Kategori harus dipilih.");
+                          return;
+                        }
+
                         final updatedProduct = Produk(
                           id: produk.id,
                           kodeProduk: produk.kodeProduk,

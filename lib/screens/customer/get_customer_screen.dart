@@ -33,11 +33,11 @@ class _GetCustomerScreenState extends State<GetCustomerScreen> {
     try {
       final data = await _customerServices.ambilCustomer();
 
-      // SORTING CUSTOMER PALING BARU DI ATAS
+      // SORTING DARI PALING BARU
       data.sort((a, b) {
         final dateA = a.tanggalRegistrasi ?? DateTime(0);
         final dateB = b.tanggalRegistrasi ?? DateTime(0);
-        return dateB.compareTo(dateA); // terbaru → atas
+        return dateB.compareTo(dateA);
       });
 
       setState(() {
@@ -69,9 +69,8 @@ class _GetCustomerScreenState extends State<GetCustomerScreen> {
     return Scaffold(
       appBar: AppbarWidget(judulHalaman: "Customer"),
       drawer: const NavigationdrawerWidget(),
-
       body: isLoading
-          ? Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator())
           : Padding(
               padding: const EdgeInsets.all(10),
               child: Column(
@@ -80,20 +79,25 @@ class _GetCustomerScreenState extends State<GetCustomerScreen> {
                   SearchbarWidgets(
                     hintText: "Search customer . . .",
                     controller: _searchController,
-                    onChanged: _filterCustomers,
+                    onChanged: _filterCustomers,   // FIX DI SINI
                   ),
 
-                  SizedBox(height: 12),
+                  const SizedBox(height: 12),
 
                   // LIST CUSTOMER
                   Expanded(
                     child: filteredCustomers.isEmpty
-                        ? Center(child: Text("No matching customers"))
+                        ? const Center(child: Text("No matching customers"))
                         : ListView.builder(
                             itemCount: filteredCustomers.length,
                             itemBuilder: (context, index) {
-                              final customer = filteredCustomers[index];
-                              return CardCustomerWidget(pelanggan: customer);
+                              return CardCustomerWidget(
+                                pelanggan: filteredCustomers[index],
+                                onTap: () async {
+                                  await loadCustomers();
+                                  _filterCustomers(_searchController.text);
+                                },
+                              );
                             },
                           ),
                   ),

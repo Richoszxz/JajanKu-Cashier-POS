@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:quickalert/quickalert.dart';
 import 'package:jajanku_pos/constants/app_color.dart';
-import 'package:jajanku_pos/routes/app_routes.dart';
-import 'package:jajanku_pos/services/authentication_services.dart';
 
 void successAlert(
   BuildContext context, {
@@ -60,7 +58,6 @@ void confirmAlert(
     confirmBtnText: 'Ok',
     confirmBtnColor: AppColor.warnaPrimer,
     cancelBtnTextStyle: TextStyle(color: AppColor.warnaTeks),
-    autoCloseDuration: Duration(seconds: 2),
     onConfirmBtnTap: () async {
       if (onConfirm != null) {
         await onConfirm(); // jalankan aksi custom

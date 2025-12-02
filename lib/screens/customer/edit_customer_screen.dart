@@ -38,9 +38,60 @@ class _EditCustomerScreenState extends State<EditCustomerScreen> {
     );
   }
 
+  /// SnackBar sesuai warna aplikasi
+  void showAppSnack(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        backgroundColor: AppColor.warnaPrimer,
+        content: Text(
+          message,
+          style: const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        behavior: SnackBarBehavior.floating,
+        margin: const EdgeInsets.all(15),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      ),
+    );
+  }
+
   // 🔥 SIMPAN EDIT CUSTOMER
   Future<void> _editCustomer() async {
     if (_formKey.currentState!.validate()) {
+      String name = namaPelanggan.text.trim();
+      String email = emailPelanggan.text.trim();
+      String phone = nomorHandphonePelanggan.text.trim();
+
+      // --- VALIDATOR SnackBar ---
+
+      if (name.isEmpty) {
+        return showAppSnack("Nama customer wajib diisi");
+      }
+
+      if (name.length < 3) {
+        return showAppSnack("Nama minimal 3 karakter");
+      }
+
+      if (email.isNotEmpty) {
+        final emailRegex =
+            RegExp(r'^[\w-.]+@([\w-]+\.)+[\w-]{2,}$');
+        if (!emailRegex.hasMatch(email)) {
+          return showAppSnack(
+              "Format email tidak valid (contoh: nama@gmail.com)");
+        }
+      }
+
+      if (phone.isNotEmpty) {
+        if (!RegExp(r'^[0-9]+$').hasMatch(phone)) {
+          return showAppSnack("Nomor telepon hanya boleh angka");
+        }
+        if (phone.length <= 10) {
+          return showAppSnack("Nomor telepon minimal 10 digit");
+        }
+      }
+
       try {
         // buat object pelanggan yg sudah diperbarui
         final updatedPelanggan = Pelanggan(
@@ -53,20 +104,15 @@ class _EditCustomerScreenState extends State<EditCustomerScreen> {
           widget.pelanggan.id!,
           updatedPelanggan,
         );
-
-        successAlert(
-          context,
-          title: "Success",
-          text: "Customer berhasil diperbarui!",
-        );
-
-        Navigator.pop(context, true); // kirim tanda success agar refresh parent
+        if (mounted) {
+          Navigator.pop(
+            context,
+            true,
+          ); // kirim tanda success agar refresh parent
+          setState(() {});
+        }
       } catch (e) {
-        errorAlert(
-          context,
-          title: "Oops!",
-          text: "Gagal update customer: $e",
-        );
+        errorAlert(context, title: "Oops!", text: "Gagal update customer: $e");
       }
     }
   }
@@ -104,17 +150,58 @@ class _EditCustomerScreenState extends State<EditCustomerScreen> {
                     label: "Username",
                     hintText: "",
                     controller: namaPelanggan,
-                  ),
-                  TextformfieldWidget(
-                    label: "Phone Number",
-                    hintText: "",
-                    controller: nomorHandphonePelanggan,
+                    validator: (value) {
+                      if (value == null || value.trim().isEmpty) {
+                        return "Nama customer wajib diisi";
+                      }
+                      if (value.trim().length < 3) {
+                        return "Nama minimal 3 karakter";
+                      }
+                      return null;
+                    },
                   ),
                   TextformfieldWidget(
                     label: "Email",
                     hintText: "",
                     controller: emailPelanggan,
+                    validator: (value) {
+                      if (value == null || value.trim().isEmpty)
+                        return null; // optional
+
+                      // format harus benar, sama seperti AddCustomer
+                      final emailRegex = RegExp(
+                        r'^[\w-.]+@([\w-]+\.)+[\w-]{2,}$',
+                      );
+
+                      if (!emailRegex.hasMatch(value.trim())) {
+                        return "Format email tidak valid (misal: nama@gmail.com)";
+                      }
+
+                      return null;
+                    },
                   ),
+                  TextformfieldWidget(
+                    label: "Phone Number",
+                    hintText: "",
+                    controller: nomorHandphonePelanggan,
+                    validator: (value) {
+                      if (value == null || value.trim().isEmpty)
+                        return null; // optional
+
+                      final phone = value.trim();
+
+                      if (!RegExp(r'^[0-9]+$').hasMatch(phone)) {
+                        return "Nomor handphone hanya boleh berisi angka.";
+                      }
+
+                      if (phone.length < 10) {
+                        return "Nomor telepon minimal 10 digit.";
+                      }
+
+                      return null;
+                    },
+                  ),
+
                   SizedBox(
                     height: AppSize.tinggi(context) * 0.05,
                     width: AppSize.lebar(context) * 0.4,
@@ -122,14 +209,11 @@ class _EditCustomerScreenState extends State<EditCustomerScreen> {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColor.warnaPrimer,
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15)
-                        )
+                          borderRadius: BorderRadius.circular(15),
+                        ),
                       ),
                       onPressed: _editCustomer,
-                      child: Text(
-                        "Save",
-                        style: AppTextstyle.appBarTeks,
-                      ),
+                      child: Text("Save", style: AppTextstyle.appBarTeks),
                     ),
                   ),
                 ],

@@ -51,12 +51,34 @@ class _LoginScreenState extends State<LoginScreen> {
         );
       }
     } on AuthException catch (e) {
-      errorAlert(context, text: "Error ${e}", title: "Error");
+      final errorMsg = e.message.toLowerCase();
+
+      if (errorMsg.contains("invalid login credentials")) {
+        errorAlert(
+          context,
+          text: "Email atau password salah!",
+          title: "Login gagal",
+        );
+      } else if (errorMsg.contains("email not confirmed")) {
+        errorAlert(
+          context,
+          text: "Email belum diverifikasi. Silakan cek email kamu.",
+          title: "Email belum verifikasi",
+        );
+      } else if (errorMsg.contains("invalid email")) {
+        errorAlert(
+          context,
+          text: "Format email tidak valid!",
+          title: "Email salah",
+        );
+      } else {
+        errorAlert(context, text: "Error: ${e.message}", title: "Gagal Login");
+      }
     } catch (e) {
       errorAlert(
         context,
-        text: "Terjadi kesalahan",
-        title: "Terjadi kesalahan",
+        text: "Terjadi kesalahan server. Coba lagi nanti.",
+        title: "Error!",
       );
     }
 
@@ -161,9 +183,22 @@ class _LoginScreenState extends State<LoginScreen> {
                                   borderSide: BorderSide.none,
                                 ),
                               ),
-                              validator: (value) => value!.isEmpty
-                                  ? 'Email tidak boleh kosong'
-                                  : null,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return "Email tidak boleh kosong";
+                                }
+
+                                // VALIDASI FORMAT EMAIL
+                                final emailRegex = RegExp(
+                                  r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                                );
+
+                                if (!emailRegex.hasMatch(value)) {
+                                  return "Format email tidak valid (harus ada @ dan domain)";
+                                }
+
+                                return null;
+                              },
                             ),
                           ),
 
@@ -227,7 +262,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                           ),
 
-                          SizedBox(height: 20,),
+                          SizedBox(height: 20),
 
                           _isLoading
                               ? CircularProgressIndicator()

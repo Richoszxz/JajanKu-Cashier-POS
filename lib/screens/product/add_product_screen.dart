@@ -46,6 +46,25 @@ class _AddProductScreenState extends State<AddProductScreen> {
     setState(() => kategori = result);
   }
 
+  // SnackBar khusus agar warnanya sesuai aplikasi
+  void showAppSnack(String msg) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        backgroundColor: AppColor.warnaPrimer,
+        content: Text(
+          msg,
+          style: const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        behavior: SnackBarBehavior.floating,
+        margin: const EdgeInsets.all(15),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      ),
+    );
+  }
+
   // PAKAI IMAGE PICKER
   Future _pilihGambar() async {
     final XFile? foto = await ImagePicker().pickImage(
@@ -82,53 +101,71 @@ class _AddProductScreenState extends State<AddProductScreen> {
   }
 
   Future simpanProduk() async {
-  if (!_formKey.currentState!.validate()) return;
+    if (!_formKey.currentState!.validate()) return;
 
-  if (kategoriTerpilih == null) {
-    ScaffoldMessenger.of(context)
-        .showSnackBar(const SnackBar(content: Text("Kategori harus dipilih")));
-    return;
+    // 1. Nama
+    if (_namaProdukController.text.trim().isEmpty) {
+      return showAppSnack("Nama produk tidak boleh kosong");
+    }
+
+    // 2. Kategori
+    if (kategoriTerpilih == null) {
+      return showAppSnack("Kategori harus dipilih");
+    }
+
+    // 3. Harga
+    if (_hargaProdukController.text.trim().isEmpty) {
+      return showAppSnack("Harga produk tidak boleh kosong");
+    }
+    if (double.tryParse(_hargaProdukController.text.trim()) == null) {
+      return showAppSnack("Harga harus berupa angka");
+    }
+
+    // 4. Stok
+    if (_stokProdukController.text.trim().isEmpty) {
+      return showAppSnack("Stok produk tidak boleh kosong");
+    }
+    if (int.tryParse(_stokProdukController.text.trim()) == null) {
+      return showAppSnack("Stok harus berupa angka");
+    }
+
+    // Generate kode produk
+    String kode = await ProductServices().generateKodeProdukById();
+
+    // Upload gambar jika ada
+    String? urlGambar;
+    if (_gambarTerpilih != null) {
+      urlGambar = await uploadKeSupabase(_gambarTerpilih!);
+    }
+
+    final produk = Produk(
+      kodeProduk: kode, // ← WAJIB ADA
+      namaProduk: _namaProdukController.text,
+      hargaProduk: double.parse(_hargaProdukController.text),
+      kategoriId: kategoriTerpilih!.id!,
+      stokProduk: int.parse(_stokProdukController.text),
+      deskripsiProduk: _deskripsiProdukController.text,
+      gambarProduk: urlGambar,
+    );
+
+    try {
+      await ProductServices().tambahProduk(produk);
+      successAlert(context, text: "Succedeed add product", title: "Succedeed!");
+
+      // RESET SEMUA FIELD
+      _namaProdukController.clear();
+      _deskripsiProdukController.clear();
+      _hargaProdukController.clear();
+      _stokProdukController.clear();
+      setState(() {
+        kategoriTerpilih = null;
+        _gambarTerpilih = null;
+      });
+    } catch (e) {
+      print("$e");
+      errorAlert(context, text: "Error add product! $e", title: "Oops . . .");
+    }
   }
-
-  // Generate kode produk
-  String kode = await ProductServices().generateKodeProdukById();
-
-  // Upload gambar jika ada
-  String? urlGambar;
-  if (_gambarTerpilih != null) {
-    urlGambar = await uploadKeSupabase(_gambarTerpilih!);
-  }
-
-  final produk = Produk(
-    kodeProduk: kode, // ← WAJIB ADA
-    namaProduk: _namaProdukController.text,
-    hargaProduk: double.parse(_hargaProdukController.text),
-    kategoriId: kategoriTerpilih!.id!,
-    stokProduk: int.parse(_stokProdukController.text),
-    deskripsiProduk: _deskripsiProdukController.text,
-    gambarProduk: urlGambar,
-  );
-
-  try {
-    await ProductServices().tambahProduk(produk);
-    successAlert(context, text: "Succedeed add product", title: "Succedeed!");
-
-    // RESET SEMUA FIELD
-    _namaProdukController.clear();
-    _deskripsiProdukController.clear();
-    _hargaProdukController.clear();
-    _stokProdukController.clear();
-    setState(() {
-      kategoriTerpilih = null;
-      _gambarTerpilih = null;
-    });
-  } catch (e) {
-    print("$e");
-    errorAlert(context, text: "Error add product! $e", title: "Oops . . .");
-  }
-}
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -145,15 +182,16 @@ class _AddProductScreenState extends State<AddProductScreen> {
                 TextformfieldWidget(
                   label: "Name Product",
                   controller: _namaProdukController,
-                  validator: (v) =>
-                      v!.isEmpty ? "Nama produk tidak boleh kosong" : null,
+                  validator: (v) {
+                    if (v == null || v.isEmpty)
+                      return "Nama produk tidak boleh kosong";
+                    return null;
+                  },
                   hintText: '',
                 ),
                 TextformfieldWidget(
                   label: "Description Product",
                   controller: _deskripsiProdukController,
-                  validator: (v) =>
-                      v!.isEmpty ? "Deskripsi tidak boleh kosong" : null,
                   hintText: '',
                 ),
                 CustomdropdownWidget(
@@ -168,12 +206,30 @@ class _AddProductScreenState extends State<AddProductScreen> {
                   controller: _hargaProdukController,
                   keyboardType: TextInputType.number,
                   hintText: '',
+                  validator: (value) {
+                    if (value == null || value.isEmpty)
+                      return "Harga produk tidak boleh kosong";
+
+                    if (double.tryParse(value) == null) {
+                      return "Harga harus berupa angka";
+                    }
+                    return null;
+                  },
                 ),
                 TextformfieldWidget(
                   label: "Stok",
                   controller: _stokProdukController,
                   keyboardType: TextInputType.number,
                   hintText: '',
+                  validator: (value) {
+                    if (value == null || value.isEmpty)
+                      return "Stok produk tidak boleh kosong";
+
+                    if (int.tryParse(value) == null) {
+                      return "Stok harus berupa angka";
+                    }
+                    return null;
+                  },
                 ),
 
                 // UPLOAD KONTAINER
@@ -255,7 +311,7 @@ class _AddProductScreenState extends State<AddProductScreen> {
                       borderRadius: BorderRadiusGeometry.circular(15),
                     ),
                   ),
-                  child: Text("Save", style: AppTextstyle.appBarTeks,),
+                  child: Text("Save", style: AppTextstyle.appBarTeks),
                 ),
               ],
             ),

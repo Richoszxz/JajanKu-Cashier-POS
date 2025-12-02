@@ -7,8 +7,9 @@ import 'package:jajanku_pos/screens/customer/edit_customer_screen.dart';
 
 class CardCustomerWidget extends StatefulWidget {
   final Pelanggan pelanggan;
+  final VoidCallback? onTap;
 
-  const CardCustomerWidget({super.key, required this.pelanggan});
+  const CardCustomerWidget({super.key, required this.pelanggan, this.onTap});
 
   @override
   State<CardCustomerWidget> createState() => _CardCustomerWidgetState();
@@ -40,7 +41,11 @@ class _CardCustomerWidgetState extends State<CardCustomerWidget> {
               shape: BoxShape.circle,
               color: AppColor.warnaSekunder,
             ),
-            child: Icon(Icons.account_circle_outlined, size: 45, color: AppColor.warnaTeks),
+            child: Icon(
+              Icons.account_circle_outlined,
+              size: 45,
+              color: AppColor.warnaTeks,
+            ),
           ),
           title: Text(
             widget.pelanggan.kodePelanggan.toString(),
@@ -64,7 +69,7 @@ class _CardCustomerWidgetState extends State<CardCustomerWidget> {
               ),
               child: Icon(Icons.more_horiz, color: AppColor.warnaPrimer),
             ),
-            onSelected: (String result) {
+            onSelected: (String result) async {
               // Logika navigasi berdasarkan item yang dipilih
               switch (result) {
                 case 'details':
@@ -77,13 +82,16 @@ class _CardCustomerWidgetState extends State<CardCustomerWidget> {
                   );
                   break;
                 case 'edit':
-                  Navigator.push(
+                  final result = await Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (context) =>
                           EditCustomerScreen(pelanggan: widget.pelanggan),
                     ),
                   );
+                  if (result == true) {
+                    widget.onTap?.call();
+                  }
                   break;
               }
             },
@@ -95,10 +103,7 @@ class _CardCustomerWidgetState extends State<CardCustomerWidget> {
                   children: [
                     Icon(Icons.list_alt, color: AppColor.warnaPrimer),
                     const SizedBox(width: 8),
-                    Text(
-                      'Details',
-                      style: AppTextstyle.smallCoklat,
-                    ),
+                    Text('Details', style: AppTextstyle.smallCoklat),
                   ],
                 ),
               ),
@@ -109,10 +114,7 @@ class _CardCustomerWidgetState extends State<CardCustomerWidget> {
                   children: [
                     Icon(Icons.edit, color: AppColor.warnaPrimer),
                     const SizedBox(width: 8),
-                    Text(
-                      'Edit',
-                      style: AppTextstyle.smallCoklat,
-                    ),
+                    Text('Edit', style: AppTextstyle.smallCoklat),
                   ],
                 ),
               ),
